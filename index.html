@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fff8f5">
+<title>A Little Surprise for Guitari</title>
+<style>
+:root{--bg:#fff8f5;--pink:#f1cbd4;--pink-2:#e8aaba;--rose:#a96379;--rose-dark:#774657;--ink:#57484a;--muted:#998488;--line:rgba(169,99,121,.2);--shadow:0 22px 65px rgba(120,65,82,.12)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Trebuchet MS","Segoe UI",sans-serif;background:radial-gradient(ellipse at 12% 12%,rgba(241,203,212,.5),transparent 32%),radial-gradient(ellipse at 88% 82%,rgba(246,226,217,.75),transparent 30%),var(--bg);overflow-x:hidden}
+button,input,textarea{font:inherit}
+button{-webkit-tap-highlight-color:transparent}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(169,99,121,.4);outline-offset:3px}
+.progress-track{position:fixed;top:0;left:0;right:0;height:3px;background:#f1e1e3;z-index:50}
+#progress{height:100%;width:14.285%;background:linear-gradient(90deg,var(--rose),var(--pink-2));transition:width .4s ease}
+.decor{position:fixed;z-index:-1;border-radius:50%;background:rgba(232,170,186,.35);pointer-events:none;animation:float 6s ease-in-out infinite}
+.decor.d1{top:12%;left:6%;width:22px;height:22px}
+.decor.d2{top:22%;right:7%;width:14px;height:14px;animation-delay:-2s}
+.decor.d3{bottom:14%;left:8%;width:18px;height:18px;animation-delay:-3s}
+.decor.d4{bottom:18%;right:6%;width:26px;height:26px;animation-delay:-1s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.app{min-height:100svh;padding:42px 17px 30px;display:grid;place-items:center}
+.page{display:none;width:min(100%,850px);margin:auto;text-align:center;animation:page-in .55s ease both}
+.page.active{display:block}
+@keyframes page-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow{color:var(--rose);font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 17px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:-.035em}
+h1{font-size:clamp(2.7rem,8vw,5.3rem);line-height:1.06;margin:0 0 20px}
+h2{font-size:clamp(2.2rem,6vw,3.8rem);line-height:1.1;margin:0 0 16px}
+.italic{color:var(--rose);font-style:italic}
+.lead{color:var(--muted);max-width:560px;margin:0 auto 27px;line-height:1.85;font-size:clamp(.95rem,2.4vw,1.08rem)}
+.small-note{color:#b19a9b;font-size:.78rem;line-height:1.6}
+.btn{border:0;border-radius:999px;min-height:49px;padding:14px 26px;color:#fff;background:var(--rose-dark);box-shadow:0 9px 24px rgba(119,70,87,.18);cursor:pointer;display:inline-flex;justify-content:center;align-items:center;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px);background:#643849}
+.btn:active{transform:scale(.98)}
+.btn.secondary{background:rgba(255,253,251,.8);color:var(--rose-dark);border:1px solid var(--line);box-shadow:none}
+.btn.secondary:hover{background:#fff}
+.btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+.btn-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:11px;margin-top:23px}
+.card{background:rgba(255,253,251,.84);border:1px solid var(--line);border-radius:28px;padding:clamp(24px,5vw,44px);box-shadow:var(--shadow)}
+
+/* Flower picker */
+.selection-counter{display:inline-flex;padding:9px 16px;border-radius:999px;background:#f8e7eb;color:var(--rose-dark);font-size:.86rem}
+.picker-top{margin-bottom:22px}
+.flower-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;text-align:left}
+.flower-option{min-width:0;position:relative;border:1.5px solid var(--line);border-radius:18px;padding:9px;background:rgba(255,253,251,.9);cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s;color:var(--ink)}
+.flower-option:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(120,65,82,.09)}
+.flower-option.selected{border-color:var(--rose);background:#fff4f6;box-shadow:0 0 0 2px rgba(169,99,121,.1)}
+.flower-option.selected:after{content:"";position:absolute;top:14px;right:14px;width:22px;height:22px;background:var(--rose-dark);border-radius:50%;box-shadow:0 2px 7px #0002}
+.flower-option.selected:before{content:"";position:absolute;top:20px;right:22px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);z-index:2}
+.flower-thumb{display:block;width:100%;aspect-ratio:1/1.08;object-fit:contain;border-radius:12px;background:#fff8f6}
+.flower-name{display:block;font-size:.83rem;font-weight:700;margin:9px 2px 3px;overflow-wrap:anywhere}
+.flower-code{display:block;color:var(--muted);font-size:.7rem;margin:0 2px 2px}
+.selection-hint{min-height:22px;color:var(--muted);font-size:.82rem;margin:15px 0 0}
+
+/* Bouquet */
+.bouquet-stage{width:min(100%,520px);aspect-ratio:1/1;margin:14px auto 8px;border-radius:28px;background:radial-gradient(ellipse at 50% 40%,#fff 0,#fff8f6 55%,#f7e5e5 100%);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+.bouquet-stage svg{display:block;width:100%;height:100%}
+
+/* Envelope */
+.envelope{position:relative;width:230px;height:150px;margin:80px auto 22px;cursor:pointer;filter:drop-shadow(0 14px 18px rgba(119,70,87,.16))}
+.env-back{position:absolute;inset:0;background:#dfa9b8;border-radius:8px}
+.env-paper{position:absolute;left:16px;right:16px;top:12px;height:124px;background:#fffdfb;border-radius:4px;z-index:2;padding:20px 18px;transition:transform .6s .25s ease}
+.env-paper i{display:block;height:3px;border-radius:2px;background:#ecd8dc;margin-bottom:12px}
+.env-paper i:nth-child(1){width:45%;background:#d9a9b6}
+.env-paper i:nth-child(3){width:85%}
+.env-paper i:nth-child(4){width:65%}
+.env-front{position:absolute;inset:0;z-index:3;background:#f0cdd6;border-radius:8px;clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%)}
+.env-flap{position:absolute;left:0;right:0;top:0;height:86px;z-index:4;background:#e8b9c5;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top center;transition:transform .5s ease,z-index 0s .25s}
+.env-seal{position:absolute;z-index:5;left:calc(50% - 10px);top:68px;width:20px;height:20px;border-radius:50%;background:var(--rose-dark);transition:opacity .25s}
+.envelope.open .env-flap{transform:rotateX(180deg);z-index:1}
+.envelope.open .env-seal{opacity:0}
+.envelope.open .env-paper{transform:translateY(-72px)}
+.letter-content{display:none;max-width:570px;margin:20px auto 0;padding:25px clamp(20px,5vw,35px);text-align:left;border:1px solid var(--line);border-radius:20px;background:rgba(255,253,251,.9);color:#796665;line-height:1.9;animation:page-in .5s ease both}
+.letter-content.show{display:block}
+.letter-signoff{color:var(--rose);font-family:Georgia,serif;font-style:italic;font-size:1.15rem;margin-bottom:0}
+
+/* Form */
+.date-form{max-width:540px;margin:24px auto 0;text-align:left;padding:clamp(22px,5vw,34px);background:rgba(255,253,251,.88);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}
+.field{margin-bottom:17px}
+.field label{display:block;color:var(--rose-dark);font-weight:700;font-size:.82rem;margin-bottom:8px}
+.field input,.field textarea{width:100%;border:1px solid #e7d2d5;background:#fff;color:var(--ink);border-radius:12px;padding:13px 14px;outline:none}
+.field textarea{min-height:82px;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(169,99,121,.09)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.error{color:#a13b50;min-height:20px;font-size:.8rem;margin:8px 0 0}
+.wa-note{padding:12px 14px;border-radius:13px;background:#edf7ef;color:#3c7550;font-size:.78rem;line-height:1.55;margin:17px 0}
+.reject-wrap{display:inline-block}
+.btn.fly{position:fixed;z-index:90;margin:0;transition:left .28s ease,top .28s ease}
+@media(max-width:420px){.reject-wrap{width:100%}}
+.footer-note{color:#b19a9b;font-size:.7rem;letter-spacing:.16em;margin-top:33px}
+.confetti{position:fixed;top:-20px;z-index:100;width:9px;height:13px;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translate3d(var(--drift),110vh,0) rotate(780deg);opacity:.2}}
+.toast{position:fixed;z-index:120;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#60404b;color:#fff;border-radius:999px;padding:12px 17px;font-size:.83rem;box-shadow:var(--shadow);transition:.25s;width:max-content;max-width:calc(100% - 30px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:700px){
+  .flower-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .app{padding-top:34px}
+}
+@media(min-width:480px) and (max-width:700px){.flower-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:420px){
+  .form-grid{grid-template-columns:1fr;gap:0}
+  .btn-row .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="progress-track" aria-hidden="true"><div id="progress"></div></div>
+<div class="decor d1" aria-hidden="true"></div>
+<div class="decor d2" aria-hidden="true"></div>
+<div class="decor d3" aria-hidden="true"></div>
+<div class="decor d4" aria-hidden="true"></div>
+<div class="app">
+
+  <section class="page active" id="page1">
+    <p class="eyebrow">a tiny little surprise</p>
+    <h1>Hey, <span class="italic">Guitari!</span></h1>
+    <p class="lead">I made a little something just for you.<br>A small surprise to celebrate a very special day.</p>
+    <button class="btn" onclick="goToPage(2)">Press to continue</button>
+    <p class="small-note" style="margin-top:21px">psst... there's something waiting for you</p>
+  </section>
+
+  <section class="page" id="page2">
+    <div class="card">
+      <p class="eyebrow">the day you've worked for</p>
+      <h1>Happy <span class="italic">Graduation!</span></h1>
+      <p class="lead">Guitari Dwi Rengganis, you made it! I hope you're proud of every little step that brought you here, even the hard days that no one else saw.</p>
+      <p class="lead">You deserve to celebrate this beautiful milestone. And I have one more little surprise for you.</p>
+      <button class="btn" onclick="goToPage(3)">Let's see it</button>
+    </div>
+  </section>
+
+  <section class="page" id="page3">
+    <div class="picker-top">
+      <p class="eyebrow">pick the flowers for your bouquet</p>
+      <h2>Choose Your <span class="italic">Flowers</span></h2>
+      <p class="lead" style="margin-bottom:14px">Choose 3 to 10 kinds of flowers. Each kind will have 5 stems in your bouquet. Pick the ones you love.</p>
+      <div class="selection-counter"><span id="selectionCount">0</span>&nbsp;/ 10 kinds selected</div>
+    </div>
+    <div class="flower-grid" id="flowerGrid" aria-label="Flower choices"></div>
+    <p class="selection-hint" id="selectionHint" aria-live="polite">Choose at least 3 kinds to continue.</p>
+    <div class="btn-row">
+      <button class="btn secondary" onclick="goToPage(2)">Back</button>
+      <button class="btn" id="createBouquetBtn" disabled onclick="goToPage(4)">Create my bouquet</button>
+    </div>
+  </section>
+
+  <section class="page" id="page4">
+    <p class="eyebrow">made from your choices</p>
+    <h2>Your <span class="italic">Bouquet</span></h2>
+    <p class="lead">A little bouquet made just the way you chose it. Every flower here is part of your design.</p>
+    <div class="bouquet-stage" id="bouquetStage" aria-label="Your flower bouquet preview"></div>
+    <div class="btn-row">
+      <button class="btn secondary" onclick="goToPage(3)">Change flowers</button>
+      <button class="btn" onclick="goToPage(5)">A letter for you</button>
+    </div>
+  </section>
+
+  <section class="page" id="page5">
+    <p class="eyebrow">from me, to you</p>
+    <h2>A Little <span class="italic">Letter</span></h2>
+    <p class="lead">Tap the envelope. There's a little note I wanted you to read.</p>
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open your letter" onclick="openLetter()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLetter();}">
+      <div class="env-back"></div>
+      <div class="env-paper"><i></i><i></i><i></i><i></i></div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal"></div>
+    </div>
+    <p class="small-note" id="letterHint">tap the envelope to open it</p>
+    <article class="letter-content" id="letterContent">
+      <p>Dear Guitari,</p>
+      <p>Happy graduation!</p>
+      <p>I hope you know how special this moment is. You worked hard to get here, and you deserve to feel proud of yourself, not just today, but for every little step along the way.</p>
+      <p>May this new chapter bring you kind people, exciting opportunities, peaceful days, and countless reasons to smile. I hope you keep believing in yourself, even when the road ahead feels uncertain.</p>
+      <p>And since a day this special deserves a little something extra, I have one more question for you.</p>
+      <p class="letter-signoff">Keep shining, graduate. Always.</p>
+    </article>
+    <div class="btn-row">
+      <button class="btn secondary" onclick="goToPage(4)">My bouquet</button>
+      <button class="btn" onclick="goToPage(6)">One more thing...</button>
+    </div>
+  </section>
+
+  <section class="page" id="page6">
+    <p class="eyebrow">a little invitation</p>
+    <h2>When Can <span class="italic">We Meet?</span></h2>
+    <p class="lead">I'd love to give you your flowers in person, along with a little gift I've prepared for you. Pick a day and a place that work for you, and let's make a little memory together.</p>
+    <form class="date-form" id="dateForm" onsubmit="submitPlan(event)">
+      <div class="field">
+        <label for="meetDate">What day works for you?</label>
+        <input type="date" id="meetDate" required>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="meetTime">What time?</label>
+          <input type="time" id="meetTime" required>
+        </div>
+        <div class="field">
+          <label for="meetPlace">Where shall we meet?</label>
+          <input type="text" id="meetPlace" maxlength="120" placeholder="A cafe, park, or anywhere..." required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="meetNote">Anything else? (optional)</label>
+        <textarea id="meetNote" maxlength="300" placeholder="A little note, a preference, or anything you want to tell me..."></textarea>
+      </div>
+      <div class="wa-note">Next, WhatsApp will open with your date, time, and place already filled in. Just press <strong>Send</strong> to let me know.</div>
+      <p class="error" id="formError" role="alert"></p>
+      <div class="btn-row">
+        <button type="button" class="btn secondary" onclick="goToPage(5)">The letter</button>
+        <button type="submit" class="btn">Send my answer</button>
+        <span class="reject-wrap" id="rejectWrap"><button type="button" class="btn secondary" id="rejectBtn">No, thanks</button></span>
+      </div>
+    </form>
+  </section>
+
+  <section class="page" id="page7">
+    <p class="eyebrow">until then...</p>
+    <h2>See You <span class="italic">Soon?</span></h2>
+    <p class="lead">Thank you for being part of this little surprise, Guitari. I hope your graduation is the start of so many beautiful things.</p>
+    <p class="lead">I'll be looking forward to seeing you, and bringing the flowers you picked and a little gift.</p>
+    <button class="btn secondary" onclick="restart()">Replay our little moment</button>
+    <p class="footer-note">MADE WITH LOVE, JUST FOR GUITARI</p>
+  </section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/*
+  PERSONALISASI:
+  - Foto bunga: simpan 1.png sampai 10.png di folder yang sama dengan index.html.
+  - Ganti nama bunga pada array FLOWERS sesuai gambar milikmu.
+  - Nomor WhatsApp memakai format internasional tanpa +, spasi, atau tanda hubung.
+*/
+const RECIPIENT_NAME = "Guitari Dwi Rengganis";
+const WHATSAPP_NUMBER = "62859184078815";
+const STEMS_PER_KIND = 5;
+const MIN_KINDS = 3;
+const MAX_KINDS = 10;
+
+const FLOWERS = [
+  { id: 1, code: "FL01", name: "Flower 01", image: "1.png" },
+  { id: 2, code: "FL02", name: "Flower 02", image: "2.png" },
+  { id: 3, code: "FL03", name: "Flower 03", image: "3.png" },
+  { id: 4, code: "FL04", name: "Flower 04", image: "4.png" },
+  { id: 5, code: "FL05", name: "Flower 05", image: "5.png" },
+  { id: 6, code: "FL06", name: "Flower 06", image: "6.png" },
+  { id: 7, code: "FL07", name: "Flower 07", image: "7.png" },
+  { id: 8, code: "FL08", name: "Flower 08", image: "8.png" },
+  { id: 9, code: "FL09", name: "Flower 09", image: "9.png" },
+  { id: 10, code: "FL10", name: "Flower 10", image: "10.png" }
+];
+
+// Jumlah bunga per baris (atas ke bawah) untuk tiap total jenis bunga
+const ROW_LAYOUTS = {
+  3: [1, 2], 4: [2, 2], 5: [2, 3], 6: [3, 3], 7: [2, 2, 3],
+  8: [2, 3, 3], 9: [3, 3, 3], 10: [3, 3, 4]
+};
+
+let selectedFlowerIds = [];
+let letterOpened = false;
+let currentBouquetCode = "";
+let toastTimer;
+
+function goToPage(number) {
+  if (number === 4 && selectedFlowerIds.length < MIN_KINDS) {
+    showToast("Choose at least 3 kinds of flowers first");
+    return;
+  }
+  resetDodge();
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const next = document.getElementById("page" + number);
+  if (next) next.classList.add("active");
+  document.getElementById("progress").style.width = (number / 7 * 100) + "%";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (number === 2) burstConfetti(45);
+  if (number === 4) createBouquet();
+  if (number === 7) burstConfetti(35);
+}
+
+function renderFlowerPicker() {
+  const grid = document.getElementById("flowerGrid");
+  grid.innerHTML = "";
+  FLOWERS.forEach(flower => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "flower-option";
+    button.dataset.id = flower.id;
+    button.setAttribute("aria-pressed", "false");
+    button.setAttribute("aria-label", "Select " + flower.name);
+    button.innerHTML = `
+      <img class="flower-thumb" src="${flower.image}" alt="${escapeHTML(flower.name)}" loading="lazy">
+      <span class="flower-name">${escapeHTML(flower.name)}</span>
+      <span class="flower-code">${flower.code}</span>`;
+    button.addEventListener("click", () => toggleFlower(flower.id));
+    const image = button.querySelector("img");
+    image.addEventListener("error", () => { image.src = makePlaceholderImage(flower.id); }, { once: true });
+    grid.appendChild(button);
+  });
+  updateFlowerPicker();
+}
+
+function makePlaceholderImage(number) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><rect width="240" height="240" rx="20" fill="#f8e7eb"/><g fill="none" stroke="#c88c9d" stroke-width="3"><circle cx="120" cy="105" r="25"/><circle cx="120" cy="75" r="20"/><circle cx="148" cy="95" r="20"/><circle cx="137" cy="125" r="20"/><circle cx="103" cy="128" r="20"/><circle cx="91" cy="96" r="20"/></g><circle cx="120" cy="105" r="13" fill="#e3b75e"/><text x="120" y="222" text-anchor="middle" font-family="Arial" font-size="13" fill="#956071">Flower ${number}</text></svg>`;
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+
+function toggleFlower(id) {
+  const index = selectedFlowerIds.indexOf(id);
+  if (index >= 0) {
+    selectedFlowerIds.splice(index, 1);
+  } else {
+    if (selectedFlowerIds.length >= MAX_KINDS) {
+      showToast("You can choose up to 10 kinds only");
+      return;
+    }
+    selectedFlowerIds.push(id);
+  }
+  selectedFlowerIds.sort((a, b) => a - b);
+  updateFlowerPicker();
+  saveProgress();
+}
+
+function updateFlowerPicker() {
+  document.querySelectorAll(".flower-option").forEach(button => {
+    const selected = selectedFlowerIds.includes(Number(button.dataset.id));
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+  const count = selectedFlowerIds.length;
+  document.getElementById("selectionCount").textContent = count;
+  document.getElementById("createBouquetBtn").disabled = count < MIN_KINDS || count > MAX_KINDS;
+  const hint = document.getElementById("selectionHint");
+  if (count < MIN_KINDS) hint.textContent = `Choose ${MIN_KINDS - count} more kind${MIN_KINDS - count === 1 ? "" : "s"} to continue.`;
+  else if (count < MAX_KINDS) hint.textContent = `Lovely choices! You can add ${MAX_KINDS - count} more, or create your bouquet.`;
+  else hint.textContent = "Perfect! You've selected 10 kinds. Ready to make your bouquet?";
+}
+
+function getSelectedFlowers() {
+  return selectedFlowerIds.map(id => FLOWERS.find(f => f.id === id)).filter(Boolean);
+}
+
+function createBouquet() {
+  if (selectedFlowerIds.length < MIN_KINDS || selectedFlowerIds.length > MAX_KINDS) return;
+  const selected = getSelectedFlowers();
+  currentBouquetCode = "GDR-" + selected.map(f => String(f.id).padStart(2, "0")).join("");
+  renderBouquet(selected);
+}
+
+// Bouquet digambar dengan SVG: bunga tersusun rapi per baris, semua tangkai bertemu di satu titik.
+function renderBouquet(selected) {
+  const n = selected.length;
+  const rows = ROW_LAYOUTS[n] || ROW_LAYOUTS[3];
+  const size = n <= 4 ? 112 : n <= 6 ? 100 : n <= 8 ? 92 : 84;
+  const rowStep = size * 0.8;
+  const totalH = size + (rows.length - 1) * rowStep;
+  const startY = Math.max(14, 238 - totalH);
+  const gapX = size * 0.94;
+  const focus = { x: 200, y: 332 };
+
+  let stems = "", heads = "", i = 0;
+  rows.forEach((count, r) => {
+    for (let c = 0; c < count; c++) {
+      const flower = selected[i++];
+      if (!flower) continue;
+      const cx = 200 + (c - (count - 1) / 2) * gapX;
+      const top = startY + r * rowStep;
+      const baseX = cx, baseY = top + size * 0.5;
+      const midX = (baseX + focus.x) / 2 + (baseX - focus.x) * 0.1;
+      const midY = (baseY + focus.y) / 2;
+      stems += `<path d="M${baseX.toFixed(1)} ${baseY.toFixed(1)} Q${midX.toFixed(1)} ${midY.toFixed(1)} ${focus.x} ${focus.y}" stroke="#5f8a5c" stroke-width="4" stroke-linecap="round" fill="none"/>`;
+      heads += `<image class="bq-img" data-id="${flower.id}" href="${flower.image}" x="${(cx - size / 2).toFixed(1)}" y="${top.toFixed(1)}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`;
+    }
+  });
+
+  const svg = `
+  <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bouquet preview">
+    <defs>
+      <linearGradient id="wrapBack" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e6c6c3"/><stop offset=".5" stop-color="#fff0e9"/><stop offset="1" stop-color="#dcb8ba"/></linearGradient>
+      <linearGradient id="wrapFront" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f1d3d3"/><stop offset=".5" stop-color="#fff6f0"/><stop offset="1" stop-color="#e6c0c5"/></linearGradient>
+    </defs>
+    <polygon points="100,236 300,236 238,394 162,394" fill="url(#wrapBack)"/>
+    ${stems}
+    ${heads}
+    <polygon points="108,262 200,288 292,262 238,394 162,394" fill="url(#wrapFront)" stroke="#e2bfc2" stroke-width="1"/>
+    <line x1="200" y1="288" x2="200" y2="394" stroke="#e2bfc2" stroke-width="1"/>
+    <g transform="translate(200 322)">
+      <path d="M0 0 C-14 -16 -40 -14 -40 0 C-40 14 -14 14 0 0Z" fill="#a96379"/>
+      <path d="M0 0 C14 -16 40 -14 40 0 C40 14 14 14 0 0Z" fill="#a96379"/>
+      <path d="M-4 8 L-18 32 L-8 30 L-2 38 Z M4 8 L18 32 L8 30 L2 38 Z" fill="#8f5368"/>
+      <circle r="8" fill="#774657"/>
+    </g>
+  </svg>`;
+
+  const stage = document.getElementById("bouquetStage");
+  stage.innerHTML = svg;
+  stage.querySelectorAll(".bq-img").forEach(img => {
+    img.addEventListener("error", () => img.setAttribute("href", makePlaceholderImage(img.dataset.id)), { once: true });
+  });
+}
+
+function openLetter() {
+  const envelope = document.getElementById("envelope");
+  const content = document.getElementById("letterContent");
+  const hint = document.getElementById("letterHint");
+  if (!letterOpened) {
+    letterOpened = true;
+    saveProgress();
+  }
+  const open = envelope.classList.toggle("open");
+  content.classList.toggle("show", open);
+  hint.textContent = open ? "a little reminder: you deserve good things" : "tap the envelope to open it";
+}
+
+function submitPlan(event) {
+  event.preventDefault();
+  const date = document.getElementById("meetDate").value;
+  const time = document.getElementById("meetTime").value;
+  const place = document.getElementById("meetPlace").value.trim();
+  const note = document.getElementById("meetNote").value.trim();
+  const error = document.getElementById("formError");
+  error.textContent = "";
+
+  if (!date || !time || !place) {
+    error.textContent = "Please fill in the date, time, and meeting place.";
+    return;
+  }
+  const selectedDate = new Date(date + "T00:00:00");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (selectedDate < today) {
+    error.textContent = "Please choose today or a future date.";
+    return;
+  }
+  if (selectedFlowerIds.length < MIN_KINDS) {
+    error.textContent = "Please choose your bouquet first.";
+    return;
+  }
+
+  const selected = getSelectedFlowers();
+  const dateLabel = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" }).format(selectedDate);
+  // Kode bunga: nomor bunga digabung, bunga no 10 ditulis 0. Contoh: bunga 1,4,5,7 jadi BUNGA1457
+  const flowerCode = "BUNGA" + selected.map(f => f.id === 10 ? "0" : String(f.id)).join("");
+  const message = `Tanggal ${dateLabel}, jam ${time}, di ${place} yaaaaa hehehe\n\n${flowerCode}`;
+
+  const waUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message);
+  saveProgress();
+  window.location.href = waUrl;
+  setTimeout(() => goToPage(7), 800);
+}
+
+function burstConfetti(amount = 80) {
+  const colors = ["#e9a9bb", "#f5d9df", "#d6b28c", "#fffdfb", "#bd7d91", "#eadfcf"];
+  for (let i = 0; i < amount; i++) {
+    const piece = document.createElement("i");
+    piece.className = "confetti";
+    piece.style.left = Math.random() * 100 + "vw";
+    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (2.3 + Math.random() * 2.5) + "s";
+    piece.style.animationDelay = (Math.random() * .4) + "s";
+    piece.style.setProperty("--drift", (Math.random() * 220 - 110) + "px");
+    piece.style.borderRadius = Math.random() > .5 ? "50%" : "2px";
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 5300);
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem("guitariGraduationState", JSON.stringify({ selectedFlowerIds, letterOpened, updatedAt: new Date().toISOString() }));
+  } catch (e) {}
+}
+
+function restoreProgress() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("guitariGraduationState") || "null");
+    if (saved && Array.isArray(saved.selectedFlowerIds)) {
+      selectedFlowerIds = saved.selectedFlowerIds.filter(id => FLOWERS.some(f => f.id === id)).slice(0, MAX_KINDS);
+    }
+  } catch (e) {
+    selectedFlowerIds = [];
+  }
+}
+
+function restart() {
+  selectedFlowerIds = [];
+  letterOpened = false;
+  currentBouquetCode = "";
+  try { localStorage.removeItem("guitariGraduationState"); } catch (e) {}
+  document.getElementById("envelope").classList.remove("open");
+  document.getElementById("letterContent").classList.remove("show");
+  document.getElementById("letterHint").textContent = "tap the envelope to open it";
+  updateFlowerPicker();
+  goToPage(1);
+}
+
+const now = new Date();
+document.getElementById("meetDate").min = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+
+// Tombol "No, thanks" yang selalu kabur kalau didekati atau dipencet
+const rejectBtn = document.getElementById("rejectBtn");
+const rejectWrap = document.getElementById("rejectWrap");
+const dodgeLines = ["Nice try", "Not that one", "Wrong button", "Too slow", "Coba yang satunya"];
+
+function dodge(event) {
+  if (event && event.cancelable) event.preventDefault();
+  if (!rejectBtn.classList.contains("fly")) {
+    const r = rejectBtn.getBoundingClientRect();
+    rejectWrap.style.width = r.width + "px";
+    rejectWrap.style.height = r.height + "px";
+    rejectBtn.style.width = r.width + "px";
+    document.body.appendChild(rejectBtn);
+    rejectBtn.classList.add("fly");
+    rejectBtn.style.left = r.left + "px";
+    rejectBtn.style.top = r.top + "px";
+    rejectBtn.getBoundingClientRect();
+  }
+  const w = rejectBtn.offsetWidth, h = rejectBtn.offsetHeight, m = 12;
+  const maxX = Math.max(m, window.innerWidth - w - m);
+  const maxY = Math.max(m, window.innerHeight - h - m);
+  const avoid = [...document.querySelectorAll("#dateForm .btn, #dateForm .field")].map(el => el.getBoundingClientRect());
+  const cur = rejectBtn.getBoundingClientRect();
+  const hits = (x, y) => avoid.some(a => x < a.right + 8 && x + w > a.left - 8 && y < a.bottom + 8 && y + h > a.top - 8);
+  let x, y, tries = 0;
+  do {
+    x = m + Math.random() * (maxX - m);
+    y = m + Math.random() * (maxY - m);
+    tries++;
+  } while (tries < 40 && (hits(x, y) || Math.hypot(x - cur.left, y - cur.top) < 120));
+  rejectBtn.style.left = x + "px";
+  rejectBtn.style.top = y + "px";
+  if (event && event.type === "click") showToast(dodgeLines[Math.floor(Math.random() * dodgeLines.length)]);
+  if (document.activeElement === rejectBtn) rejectBtn.blur();
+}
+
+function resetDodge() {
+  if (!rejectBtn.classList.contains("fly")) return;
+  rejectBtn.classList.remove("fly");
+  rejectBtn.style.left = rejectBtn.style.top = rejectBtn.style.width = "";
+  rejectWrap.style.width = rejectWrap.style.height = "";
+  rejectWrap.appendChild(rejectBtn);
+}
+
+["pointerenter", "pointerdown", "touchstart", "focus", "click"].forEach(type =>
+  rejectBtn.addEventListener(type, dodge, { passive: false })
+);
+
+restoreProgress();
+renderFlowerPicker();
+</script>
+</body>
+</html>
